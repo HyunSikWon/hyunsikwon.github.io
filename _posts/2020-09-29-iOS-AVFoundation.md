@@ -163,6 +163,7 @@ if let artworkItem = artworkItems.first {
 asset은 미디어 재생을 위해 필수적이지만 이는 하나의 모델로, 실질적인 재생을 위해선 추가적인 객체들이 필요하다. 이제 미디어 재생을 위해 필요한 객체들을 살펴보고 미디어 재생을 위해 어떻게 객체들을 구성하는지 알아보자.
 
 ![avfoundation3](https://user-images.githubusercontent.com/48352065/94444295-24b45700-01e1-11eb-8567-f6136a08b679.png)
+
 ### \- AVPlayer
 
 AVPlayer은 media asset의 재생을 위한 중심 클래스이고, media asset의 시간과 재생을 관리한다. 로컬, 다운로드, 스트리밍 등을 할 때 사용할 수 있다.
