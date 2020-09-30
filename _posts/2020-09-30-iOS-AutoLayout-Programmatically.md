@@ -62,7 +62,7 @@ myView.leadingAnchor.constraint(equalTo: margins.leadingAnchor).isActive = true
 
 ### **NSLayoutConstraint Class**
 
-제약조건을 생성하기 위해서 `NSLayoutConstraint` 클래스의 `constraintWithItem:attribute:relatedBy:toItem:attribute:multiplier:constant:` 메소드를 사용할 수 있다. 이 메소드는 제약 방정식을 명시적으로 코드로 변환해준다. 각 파라미터는 방정식과 대응된다. Layout Anchor와 달리 모든 결과에 영항을 주지 않는 파라미터도 값을 명시해야 한다. 따라서 코드의 가독성이 떨어지는 특징이 있다. 또 특정 제약조건의 중요한 특성들을 강조하지 않기 때문에 중요한 디테일을 놓칠 가능성이 있다. 따라서 Layout Anchor API를 사용하는 것을 추천한다.
+제약조건을 생성하기 위해서 `NSLayoutConstraint` 클래스의 `constraintWithItem:attribute:relatedBy:toItem:attribute:multiplier:constant:` 메소드를 사용할 수 있다. 이 메소드는 제약 방정식을 명시적으로 코드로 변환해준다. 각 파라미터는 방정식과 대응된다. Layout Anchor와 모든 결과에 영항을 주지 않는 파라미터도 값을 명시해야 한다. 따라서 코드의 가독성이 떨어지는 특징이 있다. 또 특정 제약조건의 중요한 특성들을 강조하지 않기 때문에 중요한 디테일을 놓칠 가능성이 있다. 따라서 Layout Anchor API를 사용하는 것을 추천한다.
 
 ```swift
 NSLayoutConstraint(item: myView, 
@@ -110,7 +110,7 @@ Visual Format Language을 이용한 제약조건 생성 코드.
 
 이 코드는 leading과 trailing 제약을 생성하고, visual format language는 default sapcing을 사용하면 슈퍼뷰의 margin에 0-point 제약을 생성하기 때문에 앞서 보았던 예시들과 동일한 제약조건을 생성한다.
 
-```
+```swift
 let views = ["myView" : myView]
 let formatString = "|-[myView]-|"
  
@@ -122,16 +122,16 @@ let constraints = NSLayoutConstraint.constraints(withVisualFormat: formatString,
 NSLayoutConstraint.activate(constraints)
 ```
 
-그러나 위 코드에서 가로 세로 비율 제약조건을 생성할 수 없는데, 슈퍼 뷰를 제외한 뷰가 두개 이상 존재해야 수직, 수평 제약조건을 줄 수 있다. 이러한 이유로 .alignAllTop은 layout에 영항을 주지 않는다.
+그러나 위 코드에서 가로 세로 비율 제약조건을 생성할 수 없는데, 슈퍼 뷰를 제외한 뷰가 두개 이상 존재해야 수직, 수평 제약조건을 줄 수 있다. 이러한 이유로 `.alignAllTop`은 layout에 영항을 주지 않는다.
 
 Visual Format Language를 사용해서 제약조건을 생성하려면:
 
-1\. view들로 이루어진 dictionary를 생성한다. 이 dictionary는 반드시 \[String:view object\] 형태로 구성되어야 한다. key값은 view에 대한  format string을 식별한다.
+1\. view들로 이루어진 dictionary를 생성한다. 이 dictionary는 반드시 `[String:view object]` 형태로 구성되어야 한다. key값은 view에 대한  format string을 식별한다.
 
-2\. (Optional) metrics dictionary를 생성한다. 이 dictionary는 반드시 \[String: NSNumber\] 형태로 구성되어야 한다. key는 format string의 constant 값을 대표한다.
+2\. (Optional) metrics dictionary를 생성한다. 이 dictionary는 반드시 `[String: NSNumber]` 형태로 구성되어야 한다. key는 format string의 constant 값을 대표한다.
 
 3\. item의 단일 행과 열을 배치함으로써  format string을 생성한다.
 
-4\. NSLayoutContraint 클래스의 constraintsWithVisualFormat:options:metrics:views:메소드를 호출한다.이 메소드는 모든 제약조건을 담고있는 배열을 반환한다.
+4\. `NSLayoutContraint` 클래스의 `constraintsWithVisualFormat:options:metrics:views:` 메소드를 호출한다.이 메소드는 모든 제약조건을 담고있는 배열을 반환한다.
 
-5\. NSLayoutContraint 클래스의 activateConstraint: 메소드를 호출해서 모든 제약조건은 활성화 한다.
+5\. `NSLayoutContraint` 클래스의 `activateConstraint:` 메소드를 호출해서 모든 제약조건은 활성화 한다.
