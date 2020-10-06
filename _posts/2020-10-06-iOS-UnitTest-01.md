@@ -45,7 +45,7 @@ iOS 환경에서의 Unit Test를 공부해보자!
 
 ## Unit Testing in Xcode
 
-**Test Navigator** 테스트를 위한 가장 쉬운 방법을 제공한다. 이를 이용해 테스트 target을 생성하고 테스트를 실행할 수 있다.
+**Test Navigator**는 테스트를 위한 가장 쉬운 방법을 제공한다. 이를 이용해 테스트 target을 생성하고 테스트를 실행할 수 있다.
 
 Xcode 14 부터는 자동으로 생성해주는 듯 하다.
 
@@ -55,7 +55,7 @@ Xcode 14 부터는 자동으로 생성해주는 듯 하다.
 
 ![TestNavigator1](https://user-images.githubusercontent.com/48352065/95166014-13260d00-07e8-11eb-97b1-e24989faadbb.png)
 
-프로젝트 이름+Tests 라는 Default 이름이 생성되고 테스트 번들을 열어보자. 자동으로 번들이 생성되지 않으면 다른 navigator에 갔다가 돌아오면  된다.
+프로젝트 이름+Tests 라는 Default 이름이 생성된다. 테스트 번들을 열어보자. 자동으로 번들이 생성되지 않으면 다른 navigator에 갔다가 돌아오면된다.
 
 ![TestNavigator2](https://user-images.githubusercontent.com/48352065/95166013-13260d00-07e8-11eb-9752-afe444455312.png)
 
@@ -83,7 +83,7 @@ Xcode 14 부터는 자동으로 생성해주는 듯 하다.
 
 먼저 `XCTestAssert` 를 이용해서 프로젝트 모델의 핵심 기능을 테스트 할 것이다.  `BullsEyeGame` 객체는 한 라운드의 점수를 정확하게 계산하는지 테스트 해보자.
 
-`BullsEyeTests.swift` 에 import문 아래에 다음과 같은 코드를 추가하자.
+`BullsEyeTests.swift`의 import문 아래에 다음과 같은 코드를 추가하자.
 
 ```swift
 @testable import BullsEye
@@ -97,7 +97,7 @@ Xcode 14 부터는 자동으로 생성해주는 듯 하다.
 var sut: BullsEyeGame!
 ```
 
-이는 BullsEyeGame을 위한 placeholder를 생성하고 이는 `SUT(System Under Test)`, 즉 테스트와 연관된 테스트 케이스 클래스 객체이다.
+위 코드는 BullsEyeGame을 위한 placeholder를 생성하고 이는 `SUT(System Under Test)`, 즉 테스트와 연관된 테스트 케이스 클래스 객체이다.
 
 이제 `setUpWithError()` 에 다음 코드를 추가하자.
 
@@ -107,7 +107,7 @@ sut = BullsEyeGame()
 sut.startNewGame()
 ```
 
-이는 클래스 수준의 `BullsEyeGame` 객체가 생성하고 이로인해, 이 테스트 클래스의 모든 테스트는 SUT객체의 프로퍼티와 메소드에 접근할 수 있다.
+이는 클래스 수준의 `BullsEyeGame` 객체 생성하고 이로인해, 이 테스트 클래스의 모든 테스트는 SUT객체의 프로퍼티와 메소드에 접근할 수 있다.
 
 여기서는 `startNewGame()` 을 호출하여 `targetValue` 를 초기화 한다. 많은 테스트에서 게임이 점수를 정확히 계산하는지 테스트하기 위해 `targetValue` 를 사용할 것이다.
 
