@@ -11,6 +11,7 @@ last_modified_at: 2020-10-07 T23:40:00+08:00
 
 ---
 
+
 [iOS-Unit Test](https://hyunsikwon.github.io/ios/iOS-UnitTest-01/)에 이어지는 글 입니다.
 
 
@@ -335,3 +336,8 @@ func testGameStyleCanBeChanged() {
 몇번 더 읽어보고 공부해야겠다.
 
 실제 프로젝트를 진행하면서 테스트를 수행해보는 것도 도움이 될듯.
+
+
+## Reference
+
+[raywenderlich](https://www.raywenderlich.com/960290-ios-unit-testing-and-ui-testing-tutorial)
