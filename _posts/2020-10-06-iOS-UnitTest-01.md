@@ -60,7 +60,7 @@ Xcode 14 부터는 자동으로 생성해주는 듯 하다.
 ![TestNavigator2](https://user-images.githubusercontent.com/48352065/95166013-13260d00-07e8-11eb-9752-afe444455312.png)
 
 
-기본 템플릿은 XCTest framework를 import하고 XCTestCase의 하위 클래스를 정의한 후, `setUp(),tearDown()`  함께 예시 테스트 메소드를 정의한다.
+기본 템플릿은 XCTest framework를 import하고 XCTestCase의 하위 클래스를 정의한 후, `setUp(),tearDown()` 과 함께 예시 테스트 메소드를 정의한다.
 
 테스트를 실행하기 위한 방법은 3가지가 있다.
 
