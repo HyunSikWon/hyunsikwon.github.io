@@ -60,7 +60,7 @@ Xcode 14 부터는 자동으로 생성해주는 듯 하다.
 ![TestNavigator2](https://user-images.githubusercontent.com/48352065/95166013-13260d00-07e8-11eb-9752-afe444455312.png)
 
 
-기본 템플릿은 XCTest framework를 import하고 XCTestCase의 하위 클래스를 정의한 후, `setUpWithError(),tearDownWithError()` 와 함께 예시 테스트 메소드를 정의한다.
+기본 템플릿은 XCTest framework를 import하고 XCTestCase의 하위 클래스를 정의한 후, `setUp(),tearDown()`  함께 예시 테스트 메소드를 정의한다.
 
 테스트를 실행하기 위한 방법은 3가지가 있다.
 
@@ -99,7 +99,7 @@ var sut: BullsEyeGame!
 
 위 코드는 BullsEyeGame을 위한 placeholder를 생성하고 이는 `SUT(System Under Test)`, 즉 테스트와 연관된 테스트 케이스 클래스 객체이다.
 
-이제 `setUpWithError()` 에 다음 코드를 추가하자.
+이제 `setUp()` 에 다음 코드를 추가하자.
 
 ```swift
 super.setUp()
@@ -111,7 +111,7 @@ sut.startNewGame()
 
 여기서는 `startNewGame()` 을 호출하여 `targetValue` 를 초기화 한다. 많은 테스트에서 게임이 점수를 정확히 계산하는지 테스트하기 위해 `targetValue` 를 사용할 것이다.
 
-또한 잊지말고 SUT 객체를 release 해주자. `tearDownWithError()` 에 다음을 추가하자:
+또한 잊지말고 SUT 객체를 release 해주자. `tearDown()` 에 다음을 추가하자:
 
 ```swift
 sut = nil
