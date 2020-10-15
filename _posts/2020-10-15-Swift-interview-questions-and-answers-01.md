@@ -281,4 +281,4 @@ if case let a? = x {
 
 ## Reference
 
-[Raywenderlich]([https://www.raywenderlich.com/762435-swift-interview-questions-and-answers](https://www.raywenderlich.com/762435-swift-interview-questions-and-answers))
+[Raywenderlich](https://www.raywenderlich.com/762435-swift-interview-questions-and-answers)
