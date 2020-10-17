@@ -20,7 +20,7 @@ last_modified_at: 2020-10-15 T21:48:00+08:00
 
 ---
 
-**Raywenderlich**에서 Swift 언어와 관련한 면접 공부를 하며 정리한 글 입니다. **Beginner, Intermediate, Advanced** 3단계로 나누어져 있으며 각각에 단계에는 **writtend questions**과 **verbal questions** 두가지 타입의 질문이 있습니다.
+**Raywenderlich**에서 Swift 언어와 관련한 면접 공부를 하며 정리한 글 입니다. **Beginner, Intermediate, Advanced** 3단계로 나누어져 있으며 각각의 단계에는 **writtend questions**과 **verbal questions** 두 가지 타입의 질문이 있습니다.
 
 오늘은 Beginner에 해당하는 질문만 정리하겠습니다.
 
