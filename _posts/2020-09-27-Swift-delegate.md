@@ -19,7 +19,7 @@ Delegate Pattern에 대한 공부를 위해서 [LearnAppMacking](https://learnap
 
 ### **What is Delegation?**
 
-Apple의 공식 개발자 문서는 _delegation_을 다음과 같이 정의한다:
+Apple의 공식 개발자 문서는 *delegation*을 다음과 같이 정의한다:
 
 Delegation은 class가 몇몇 class의 책임(작업을 말하는 듯)을 다른 클래스의 인스턴스에 위임하는 것을 할 수 있게 하는 디자인 패턴이다.
 
@@ -32,19 +32,17 @@ Delegation은 class가 몇몇 class의 책임(작업을 말하는 듯)을 다른
 먼저, struct 타입의 Cookie와  Bakery class를 정의하자
 
 ```swift
-struct Cookie { 
-	var size: Int = 5
+struct Cookie {
+    var size: Int = 5
     var hasChocolateChips: Bool = false
 }
 
 class Bakery {
-
-	func makeCookie() {
-    	var cookie = Cookie()
+    func makeCookie() {
+        var cookie = Cookie()
         cookie.size = 6
         cookie.hasCholocateChips = true
     }
-
 }
 ```
 
@@ -74,16 +72,16 @@ protocol BakeryDelegate {
 }
 
 class Bakery {
-	var delegate: BakeryDelegate?
+    var delegate: BakeryDelegate?
     
-	func makeCookie() {
-    	var cookie = Cookie()
+    func makeCookie() {
+        var cookie = Cookie()
         cookie.size = 6
         cookie.hasCholocateChips = true
         
         delegate?.cookieWasBaked(cookie)
     }
-
+    
 }
 ```
 
@@ -94,7 +92,7 @@ CookieShop 클래스는 BakeryDelegate 프로토콜을 채택하고, cookieWasBa
 ```swift
 class CookieShop: BakeryDelegate {
     func cookieWasBaked(_ cookie: Cookie) {
-    	print("Yay! A new cookie was baked, with size \(cookie.size)")
+        print("Yay! A new cookie was baked, with size \(cookie.size)")
     }
 }
 ```
@@ -150,10 +148,9 @@ text view의 delegate pattern을 살펴보자
 UIViewController의 서브 클래스인 NoteViewController는 UITextViewDelegate 프로토콜을 채택하고 있고, 간단한 textview 프로퍼를 가지고 있다. 여기서 textview는 적절하게 초기화되었다고 가정하자. 
 
 ```swift
-class NoteViewController: UIViewController, UITextViewDelegate
-{
+class NoteViewController: UIViewController, UITextViewDelegate {
     var textView:UITextView = ...
-
+    
     func viewDidLoad()
     {
         textView.delegate = self
