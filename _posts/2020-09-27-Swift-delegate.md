@@ -21,9 +21,9 @@ Delegate Pattern에 대한 공부를 위해서 [LearnAppMacking](https://learnap
 
 Apple의 공식 개발자 문서는 *delegation*을 다음과 같이 정의한다:
 
-Delegation은 class가 몇몇 class의 책임(작업을 말하는 듯)을 다른 클래스의 인스턴스에 위임하는 것을 할 수 있게 하는 디자인 패턴이다.
+*Delegation*은 class가 몇몇 class의 책임(작업을 말하는 듯)을 다른 클래스의 인스턴스에 위임하는 것을 할 수 있게 하는 디자인 패턴이다.
 
-이를  현실 세계에서 일어나는 일로 가정해보자. 나와 친구는 초콜릿 쿠키를 어느 이벤트에 배달하는 팀이다. 나는 쿠키를 굽는 역할을 맡았고, 쿠키의 도우를 만드는 것을 친구에게 _위임했다._ 친구는 도우를 만들고 나에게 주기만 하면 되고, 나는 그것을 사용해서 쿠키를 굽기만 하면 된다.
+이를  현실 세계에서 일어나는 일로 가정해보자. 나와 친구는 초콜릿 쿠키를 어느 이벤트에 배달하는 팀이다. 나는 쿠키를 굽는 역할을 맡았고, 쿠키의 도우를 만드는 것을 친구에게 *위임했다*. 친구는 도우를 만들고 나에게 주기만 하면 되고, 나는 그것을 사용해서 쿠키를 굽기만 하면 된다.
 
 이를 프로그래밍으로 생각해보면, 하나의 클래스가 어떤 작업을 다른 클래스에 위임하고, 그것의 책임을 전달하는 것으로 생각할 수 있다.
 
@@ -87,7 +87,7 @@ class Bakery {
 
 위임할 작업들을 정의했으니, 이제는 위임을 받을 delegate class를 만들어 보자!
 
-CookieShop 클래스는 BakeryDelegate 프로토콜을 채택하고, cookieWasBaked(\_:) 함수를 conform 한다.
+CookieShop 클래스는 BakeryDelegate 프로토콜을 채택하고, cookieWasBaked(_:) 함수를 conform 한다.
 
 ```swift
 class CookieShop: BakeryDelegate {
@@ -99,9 +99,9 @@ class CookieShop: BakeryDelegate {
 
 이제 마지막으로 이 모든 것들을 활용해보자.
 
-CookieShop , Bakery 객체를 생성해서 각각 상수 shop, bakery에 할당하고 
+CookieShop, Bakery 객체를 생성해서 각각 상수 shop, bakery에 할당하고 
 
-bakery.delegate 에 shop을 할당한다. 이로 인해 shop이 bakery의 위임자가 되었다.
+bakery.delegate에 shop을 할당한다. 이로 인해 shop이 bakery의 위임자가 되었다.
 
 마지막으로, bakery는 쿠키를 만들고, 그 쿠키는 shop으로 전달된다.
 
@@ -123,11 +123,11 @@ Delegation은 iOS 개발에서 가장 흔한 디자인 패턴 중 하나이다.
 
 Delegation을 사용하는 iOS SDK 내에 클래스를 살펴보면:
 
-1\. _UITableView_ 클래스는 table view의 상호작용, cell의 표시, table view의 laouy 변화를 위해서 _UITableViewDelegate_, _UITableViewDataSource_ 프로토콜을  사용한다.
+1\. UITableView 클래스는 table view의 상호작용, cell의 표시, table view의 layout 변화를 위해서 _UITableViewDelegate_, _UITableViewDataSource_ 프로토콜을 사용한다.
 
-2\. _CLLocationManager_는 아이폰의 GPS 좌표와 같은 위치와 관련된 값을 앱에 report 하기 위해서 _CLLocationManagerDelegate를_ 사용한다.
+2\. CLLocationManager는 아이폰의 GPS 좌표와 같은 위치와 관련된 값을 앱에 report 하기 위해서 _CLLocationManagerDelegate를_ 사용한다.
 
-3\. _UITextView는_ 새로운 문자 삽입, text 편집의 멈춤과 같은 text view의 변화를 report 하기 위해서 _UITextViewDelegate를_ 사용한다.
+3\. UITextView는 새로운 문자 삽입, text 편집의 멈춤과 같은 text view의 변화를 report 하기 위해서 _UITextViewDelegate를_ 사용한다.
 
 3가지 delegate 프로토콜을 보면 공통된 패턴을 보여주는데:
 
