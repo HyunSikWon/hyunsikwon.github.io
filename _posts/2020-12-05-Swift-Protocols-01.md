@@ -1,5 +1,5 @@
 ---
-title: Swift - Protocols! 프로토콜!!
+title: Swift - 프로토콜!!
 layout: single
 comments: true
 share: true
@@ -7,7 +7,7 @@ categories:
 - Swift
 tag:
 - Protocols
-last_modified_at: 2020-12-05 T20:00:08+08:00
+last_modified_at: 2020-12-06 T21:18:08+08:00
 ---
 
 iOS 개발 공부를 하면 할수록, swift의 중요성을 느낀다. (swift로 개발하니 당연한 이야기지만..). UIkit Framework만 잘 사용하면 되고 언어는 어느정도만 알면 되지,, 라는 안일한 생각을 했었는데, 바보같은 생각은 집어 치우고 다시한번 Swift를 전반적으로 공부하려 한다. 순서에 상관없이, 공부하며 접하는 것들을 [docs.swift.org](http://docs.swift.org) 를 통해 공부해보자. 오늘은 프로토콜!
@@ -503,15 +503,128 @@ for object in objects {
 
 배열에 들어있는 객체가 `HasArea` 프로토콜을 준수할 때마다,  `as?` 연산자에 의해 반환된 옵셔널 값이 옵셔널 바인딩을 통해  `objectWithArea` 상수로 언랩핑 된다. 이 과정에서 `Circle` 과 `Country`는 계속해서 타입을 유지한다. 그러나 옵셔널 바인딩 과정에서 `objectWithArea` 에 저장되면 이 타입은 `HasArea` 가 된다.
 
-to be continue....
-
 ## Optional Protocol Requirements
+
+프로토콜에 *optional requirement*을 정의할 수 있다. 이 요구사항은 프로토콜을 준수하는 타입이 수행하지 않아도 된다. O*ptional requirement* 을 위해선 프로토콜을 정의할 때 `optional` 식별자를 붙여주면 된다. 또한 O*ptional requirement* 는 Objective-C에서도 사용되는 코드를 작성할 수 있도록 해준다. 이를 위해선, 프로토콜과 *optional requirement* 에 `@objc` 속성을 표시하면 된다. 이 속성이 붙여진 프로토콜은 오직 Objective-C 클래스를 상속한 클래스와 다른 `@objc` 클래스만 채택할 수 있다.
+
+메소드나 프로퍼티를 *optional requirement* 로 정의하면, 이들의 타입은 자동적으로 옵셔널이 된다. 예를들어 `(Int) -> String` 은 `((Int) -> String)?` 이 된다. 메소드의 반환타입이 아니라 함수 타입 전체가 옵셔널로 랩핑된다는 점을 주의하자.
+
+ 옵셔널 프로토콜 요구사항은 옵셔널 체이닝과 함께 호출될 수 있다. 이는 프로토콜을 준수하는 타입이 요구사항을 실행하지 않았을 가능성을 위함이다. 옵셔널 체이닝을 통해서 *optional requirement*  이행 여부를 검사할 수 있다.
+
+다음의 코드의 `Counter` 클래스는 증가량을 외부 data source 에서 가져온다. 그리고 이 data source는 두 개의 *optional requirement* 을 정의한  `CounterDataSource` 프로토콜로 정의했다.
+
+```swift
+@objc protocol CounterDataSource {
+    @objc optional func increment(forCount count: Int) -> Int
+    @objc optional var fixedIncrement: Int { get }
+}
+```
+
+`CounterDataSource` 프로토콜은 옵셔널 메소드 요구사항인 `increment(forCount:)` 와 옵셔널 프로퍼티 요구사항인 `fixedIncremetn` 를 정의한다. 이 요구사항들은 `Counter` 인스턴스에  적절한 증갸량을 제공하는 data source를 위한 두 가지의 방식을 정의한다.
+
+> 두 요구사항이 모두 옵셔널이기 때문에 `CounterDataSource`를 준수하면서 요구사항 모두를 생략할 수 있다. 기술적으로는 가능하지만 이는 좋은 방식이라고 할 수 없다.
+
+예제 코드:
+
+```swift
+class Counter {
+    var count = 0
+    var dataSource: CounterDataSource?
+    func increment() {
+        if let amount = dataSource?.increment?(forCount: count) {
+            count += amount
+        } else if let amount = dataSource?.fixedIncrement {
+            count += amount
+        }
+    }
+}
+
+class ThreeSource: NSObject, CounterDataSource {
+    let fixedIncrement = 3
+}
+
+var counter = Counter()
+counter.dataSource = ThreeSource()
+for _ in 1...4 {
+    counter.increment()
+    print(counter.count)
+}
+// 3
+// 6
+// 9
+// 12
+```
 
 ## Protocol Extensions
 
+프로토콜은 메소드, 이니셜라이져, 서브스크립트 등을 준수하는 타입에 제공하기위해 확장될 수 있다. 이는 준수하는 타입이 아니라, 프로토콜 자체로 특정 동작들을 정의할 수 있게 한다.
+
+예를들어, `RandomNumberGenerator` 프로토콜은 `random()` 메소드의 결과를 사용하여 `Bool` 타입의 값을 반환하는  `randomBool()` 을 제공하기위해 확장될 수 있다.
+
+```swift
+extension RandomNumberGenerator {
+    func randomBool() -> Bool {
+        return random() > 0.5
+    }
+}
+```
+
+이 방식을 사용하면, 해당 프로토콜을 준수하는 모든 타입이 추가적인 수정 없이 자동적으로 이 메소드를 사용할 수 있다.
+
+```swift
+let generator = LinearCongruentialGenerator()
+print("Here's a random number: \(generator.random())")
+// Prints "Here's a random number: 0.3746499199817101"
+print("And here's a random Boolean: \(generator.randomBool())")
+// Prints "And here's a random Boolean: true"
+```
+
+*Protocol extension*은 추가적인 수행을 타입에게 제공할 수는 있지만, extension을 이용해서 다른 프로토콜을 상속받을 수는 없다.
+
 ### Providing Default Implementations
 
+*Protocol extension*을 사용하여 기본 구현(default implementation)을 제공할 수 있다. 특정 프로토콜을 준수하는 타입 중에서 그 프로토콜의 요구사항에 대해 자체적으로 구현한게 있으면 그것을 사용하고 아니면 기본 구현을 사용하게 된다. 즉, 프로토콜에서는 선언만 할 수 있는데 익스텐션을 이용해 기본 구현을 제공할 수 있다.
+
+```swift
+extension PrettyTextRepresentable  {
+    var prettyTextualDescription: String {
+        return textualDescription
+    }
+}
+```
+
+> 이는 *optional requirement* 과는 차이가 있다. *Protocol extension* 역시 준수하는 타입이 반드시 기본 구현 요구사항을 따르지 않아도 되지만, 옵셔널 체이닝을 사용하지 않아도 된다는 점!
+
 ### Adding Constraints to Protocol Extensions
+
+익스텐션을 사용하여 요구사항을 정의할 때, 준수하는 타입이 익스텐션에서 정의한 메소드나 프로퍼티를 사용하기 위한 제약조건을 명시할 수 있다. 이는 `where` 절을 이용한다.
+
+다음은 `Collection` 프로토콜의 익스텐션은, 요소가 `Equatable` 프로토콜을 준수해야만 적용된다. 
+
+```swift
+extension Collection where Element: Equatable {
+    func allEqual() -> Bool {
+        for element in self {
+            if element != self.first {
+                return false
+            }
+        }
+        return true
+    }
+}
+```
+
+다음 두 배열은 `Int` 타입의 배열이고, `Int`는 `Equatable` 프로토콜을 준수하므로 익스텐션이 적용된다. 
+
+```swift
+let equalNumbers = [100, 100, 100, 100, 100]
+let differentNumbers = [100, 100, 200, 100, 200]
+
+print(equalNumbers.allEqual())
+// Prints "true"
+print(differentNumbers.allEqual())
+// Prints "false"
+```
 
 ## Reference
 
