@@ -1,5 +1,5 @@
 ---
-title: Swift - Initialization PART1
+title: Swift - Initialization part1
 layout: single
 comments: true
 share: true
