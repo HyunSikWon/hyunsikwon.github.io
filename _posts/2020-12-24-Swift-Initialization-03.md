@@ -6,7 +6,7 @@ share: true
 categories: 
 - Swift
 tag:
-- Initailization
+- Initialization
 last_modified_at: 2020-12-24 T20:40:00+08:00
 ---
 
