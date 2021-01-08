@@ -7,7 +7,7 @@ categories:
 - iOS
 tag:
 - PhotoKit
-last_modified_at: 2021-01-06 T21:00:00+08:00
+last_modified_at: 2021-01-08 T16:00:00+08:00
 ---
 
 
@@ -260,10 +260,333 @@ PHImageManager.default().requestImage(
 
 결과!
 
-
-
 <img src="https://user-images.githubusercontent.com/48352065/103767187-8a777100-5063-11eb-8330-8c618b8606e8.png" width="40%">  <img src="https://user-images.githubusercontent.com/48352065/103767174-83e8f980-5063-11eb-9a35-03d7937a88fa.png" width="40%">
 
+
+## Modifying Asset Metadata
+
+### Change Requests
+
+`PHAssetChangeRequest`는 에셋의 생성, 수정, 삭제를 도와준다. `toggleFavorite()`에 다음의 코드를 추가한다.
+
+```swift
+// 1
+let changeHandler: () -> Void = {
+  let request = PHAssetChangeRequest(for: self.asset)
+  request.isFavorite = !self.asset.isFavorite
+}
+// 2
+PHPhotoLibrary.shared().performChanges(changeHandler, completionHandler: nil)
+```
+
+1. 변경 사항을 캡슐화하기 위해서 코드 블럭을 생성한다. 먼저 에셋에 대한 변경 요청(`request`)을 생성하고, 요청의 `isFavorite` 프로퍼티를 현재 값의 반대로 설정한다.
+2. 변경 요청 블럭을 전달해서 사진 라이브러리가 변경 사항을 수행하도록 지시한다. 여기서 컴플리션 핸들러는 필요하지 않다.
+
+UI를 위한 코드도 추가한다.
+
+```swift
+if asset.isFavorite {
+  favoriteButton.image = UIImage(systemName: "heart.fill")
+} else {
+  favoriteButton.image = UIImage(systemName: "heart")
+}
+```
+
+### Photo View Controller Change Observer
+
+PhotoKit은 더 좋은 퍼포먼스를 위해서 불러오기(fetch) 요청의 결과를 저장한다(caches). 사진의 하트 버튼(favorite)을 눌렀을때, 라이브러리의 에셋은 업데이트 되지만, 뷰 컨트롤러에 있는 에셋의 복사본은 업데이트되지 않는다. 따라서 컨트롤러는 라이브러리의 업데이트 사항에따라서 필요에 따라 자신의 에셋을 업데이트 할 필요가 있다. 컨트롤러가 `PHPhotoLibraryChangeObserver`를 준수(conform)하면 이를 수행할 수 있다.
+
+```swift
+extension PhotoViewController: PHPhotoLibraryChangeObserver {
+  func photoLibraryDidChange(_ changeInstance: PHChange) {
+    // 2
+    guard
+      let change = changeInstance.changeDetails(for: asset),
+      let updatedAsset = change.objectAfterChanges
+      else { return }
+    // 3
+    DispatchQueue.main.sync {
+      // 4
+      asset = updatedAsset
+      imageView.fetchImageAsset(
+        asset, 
+        targetSize: view.bounds.size
+      ) { [weak self] _ in
+        guard let self = self else { return }
+        // 5
+        self.updateFavoriteButton()
+        self.updateUndoButton()
+      }
+    }
+  }
+}
+```
+
+1. 변경 옵저버는 오직 하나의 메소드만 가진다. 라이브러리가 변할 때마다 이 메소드를 호출한다. `photoLibraryDidChange(:)`
+2. 변경 사항이 우리의 에셋에 영향을 주었는지 먼저 확인한다. 라이브러리 변화를 설명하는(describe) `changeInstance` 프로퍼티를 사용한다. 이 프로퍼티의 `changeDetails(for:)`를 호출하고 우리의 에셋을 전달한다. 만약 에셋이 변경 사항에 영향을 받지 않았다면 `nil`을 반환하고, 영향을 받았다면 갱신된 버전의 에셋을 `objectAfterChanges`를 호출하여 받을 수 있다.
+3. 이 메소드는 백그라운드에서 실행되기 때문에, UI를 업데이트하는 나머지 로직들은 메인 스레드에서 수행해야 한다.
+4. 컨트롤러의 에셋 프로퍼티를 업데이트 된 에셋으로 바꾸고, 새로운 이미지를 불러온다.
+5. UI를 갱신(refresh) 한다.
+
+### Registering the Photo View Controller
+
+옵저버를 등록(register)해보자. `viewDidLoad()`에 다음을 추가한다. 업데이트 사항을 받기 위해선 반드시 등록해야 한다.
+
+```swift
+PHPhotoLibrary.shared().register(self)
+```
+
+또한 작업이 모두 끝나면 등록 해제(unregister)도 해줘야 한다.
+
+```swift
+deinit {
+  PHPhotoLibrary.shared().unregisterChangeObserver(self)
+}
+```
+
+결과 화면
+
+<img src="https://user-images.githubusercontent.com/48352065/103984593-bf520800-51ca-11eb-8ce0-a1a9a3283e0d.png" width="40%"> 
+
+여기에 한 가지 문제가 있다. 하트 버튼을 눌러서 선호하는 사진을 등록하고, "All Photos"로 돌아간 뒤, 다시 같은 사진을 선택하면, 하트는 빈 하트가 되어있고, 다시 하트를 눌러도 하트가 채워지지 않는다. 
+
+### Photos View Controller Change Observer
+
+이 문제는 이전 화면(`PhotosCollectionViewController`)가 변경 사항에 대한 관찰(oberve)을 하지 않기 때문에 발생한다. 따라서 `PhotosCollectionViewController`도 `PHPhotoLibraryChangeObserver`를 준수하도록 해야한다. 
+
+```swift
+extension PhotosCollectionViewController: PHPhotoLibraryChangeObserver {
+  func photoLibraryDidChange(_ changeInstance: PHChange) {
+    // 1
+    guard let change = changeInstance.changeDetails(for: assets) else {
+      return
+    }
+    DispatchQueue.main.sync {
+      // 2
+      assets = change.fetchResultAfterChanges
+      collectionView.reloadData()
+    }
+  }
+} 
+```
+
+`PhotoViewController` 에서 한 것과 비슷하다.
+
+1. 이 뷰(`PhotosCollectionViewController`)는 여러 에셋을 표시하므로, 이 에셋들에대한 모든 변경사항을 확인한다.
+2. 갱신된 결과를 `assets`에 할당하고, 컬렉션 뷰를 리프레시 한다.
+
+### Registering the Photos View Controller
+
+`viewDidLoad()`에 다음 코드를 추가한다.
+
+```swift
+PHPhotoLibrary.shared().register(self)
+```
+
+등록 해제도 추가.
+
+```swift
+deinit {
+  PHPhotoLibrary.shared().unregisterChangeObserver(self)
+}
+
+```
+
+### Album View Controller Change Observer
+
+`AlbumCollectionViewController`에도 같은 작업을 추가한다.
+
+```swift
+extension AlbumCollectionViewController: PHPhotoLibraryChangeObserver {
+  func photoLibraryDidChange(_ changeInstance: PHChange) {
+    DispatchQueue.main.sync {
+      // 1
+      if let changeDetails = changeInstance.changeDetails(for: allPhotos) {
+        allPhotos = changeDetails.fetchResultAfterChanges
+      }
+      // 2
+      if let changeDetails = changeInstance.changeDetails(for: smartAlbums) {
+        smartAlbums = changeDetails.fetchResultAfterChanges
+      }
+      if let changeDetails = changeInstance.changeDetails(for: userCollections) {
+        userCollections = changeDetails.fetchResultAfterChanges
+      }
+      // 4
+      collectionView.reloadData()
+    }
+  }
+}
+```
+
+여기서는 약간의 차이가 있다. 다양한 fetch result가 존재하기 때문에 모든 경우에 변경 사항을 확인해야 한다.
+
+### Album View Controller Registration
+
+역시 같은 작업.
+
+```swift
+// viewDidLoad()에 추가
+PHPhotoLibrary.shared().register(self)
+
+deinit {
+  PHPhotoLibrary.shared().unregisterChangeObserver(self)
+}
+```
+
+## Editing a Photo
+
+사진을 편집하는 기능을 추가해보자. 먼저 수정한 에셋을 저장할 컨테이너인 `PHContentEditingOutput`를 선언한다.
+
+```swift
+private var editingOutput: PHContentEditingOutput?
+```
+
+이후에는 `applyFilter()` 메소드에 다음 로직을 추가한다.
+
+```swift
+// 1
+asset.requestContentEditingInput(with: nil) { [weak self] input, _ in
+  guard let self = self else { return }
+
+  // 2
+  guard let bundleID = Bundle.main.bundleIdentifier else {
+    fatalError("Error: unable to get bundle identifier")
+  }
+  guard let input = input else {
+    fatalError("Error: cannot get editing input")
+  }
+  guard let filterData = Filter.noir.data else {
+    fatalError("Error: cannot get filter data")
+  }
+  // 3
+  let adjustmentData = PHAdjustmentData(
+    formatIdentifier: bundleID,
+    formatVersion: "1.0",
+    data: filterData)
+  // 4
+  self.editingOutput = PHContentEditingOutput(contentEditingInput: input)
+  guard let editingOutput = self.editingOutput else { return }
+  editingOutput.adjustmentData = adjustmentData
+  // 5
+  let fitleredImage = self.imageView.image?.applyFilter(.noir)
+  self.imageView.image = fitleredImage
+  // 6
+  let jpegData = fitleredImage?.jpegData(compressionQuality: 1.0)
+  do {
+    try jpegData?.write(to: editingOutput.renderedContentURL)
+  } catch {
+    print(error.localizedDescription)
+  }
+  // 7
+  DispatchQueue.main.async {
+    self.saveButton.isEnabled = true
+  }
+}
+```
+
+1. 편집은 컨테이너 안에서 완료된다. 입력(input) 컨테이너는 이미지에 접근할 수 있도록 해준다. 편집 로직은 컴플리션 핸들러 안에 위치한다.
+2. 계속 진행하기 위해서는 번들 식별자, 컴플리션 핸들러의 입력 컨테이너 그리고 필터 데이터가 필요하다.
+3. 수정(adjustment) 데이터는 에셋에게 변경사항을 설명하는 방법이다. 이 데이터를 생성하기 위해서는 변경사항을 식별한 고유의 식별자를 사용한다. 번들 아이디를 사용하는 것이 좋다. 또한 버전 넘버와 이미지를 수정하는데 사용되는 데이터도 사용한다.
+4. 또한 최종 수정된 이미지를 위한 출력(output) 컨테이너도 필요하다. 입력 컨테이너를 전달하여 이를 생성한다.
+5. 이미지에 필터를 적용한다. 동작 방식은 튜토리얼의 주 내용이 아니지만 `UIImage+Extensions.swift`에서 관련 코드를 확인할 수 있다.
+6. 이미지를 위해서 JPEG 데이터를 생성하고, 출력 데이터에 저장(write) 한다.
+7. 마지막으로 저장 버튼을 활성화 한다.
+
+ 
+<img src="https://user-images.githubusercontent.com/48352065/103984587-bd884480-51ca-11eb-96f2-669a77600454.png" width="40%"> 
+
+## Saving Edits
+
+이제 활성화된 저장 버튼에 기능을 추가하자. 변경사항을 라이브러리에 저장하기 위해서 위에서 사용한 출력 컨테이너를 사용한다. 위에서 메타 데이터를 변경했던 것처럼 `PHAssetChangeRequest`를 사용한다.
+
+`saveImage()`에 로직을 추가하자.
+
+```swift
+// 1
+let changeRequest: () -> Void = { [weak self] in
+  guard let self = self else { return }
+  let changeRequest = PHAssetChangeRequest(for: self.asset)
+  changeRequest.contentEditingOutput = self.editingOutput
+}
+// 2
+let completionHandler: (Bool, Error?) -> Void = { [weak self] success, error in
+  guard let self = self else { return }
+
+  guard success else {
+    print("Error: cannot edit asset: \(String(describing: error))")
+    return
+  }
+  // 3
+  self.editingOutput = nil
+  DispatchQueue.main.async {
+    self.saveButton.isEnabled = false
+  }
+}
+// 4
+PHPhotoLibrary.shared().performChanges(
+  changeRequest,
+  completionHandler: completionHandler)
+```
+
+1. 변경 사항은 코드 블럭안에서 다룬다. 에셋을 위한 `PHAssetChangeRequest`를 생성하고 출력 컨테이너를 적용한다(apply).
+2. 컴플리션 핸들러를 생성한다. 이는 변경이 완료되면 수행된다. 결과의 성공 여부를 확인하고 실패하면 오류를 출력한다.
+3. 만약 변경이 성공적이라면 더이상 필요 없는 컨테이너에 `nil`을 할당한다. 또한, 저장할 이미지가 더이상 존재하지 않으므로 저장 버튼을 비활성화 시킨다.
+4. 라이브러리의 `performChanges(:completionHandler:)`를 호출한다.
+5. 
+
+저장하기를 누르면, iOS는 사진을 수정해도 되는지 물어보는 다이얼로그 박스를 표시할 것이다.
+
+<img src="https://user-images.githubusercontent.com/48352065/103984581-bb25ea80-51ca-11eb-89c4-f561ababd043.png" width="40%"> 
+
+
+## Undoing Edits
+
+마지막으로 되돌리기(undo) 버튼의 기능을 추가하자. 이 기능 역시 `PHAssetChangeRequest`를 사용한다. 변경된 데이터의 존재 여부에 따라서 되돌리기 버튼의 활성화를 결정한다.
+
+`updateUndoButton()`에 다음을 추가한다.
+
+```swift
+let adjustmentResources = PHAssetResource.assetResources(for: asset)
+  .filter { $0.type == .adjustmentData }
+undoButton.isEnabled = !adjustmentResources.isEmpty 
+```
+
+한 에셋에 대한 각각의 수정사항은 `PHAssetResource` 객체를 생성한다. 그리고 `assetResources(for:)`는 주어진 에셋에 대한 리소스 배열을 반환한다. 필터를 통해서 수정된 데이터를 걸러낸다. 수정 데이터에 존재 여부에 따라서 되돌리기 버튼의 활성화가 결정된다.
+
+이제 되돌리기 기능을 위한 로직을 `undo()`에 추가한다.
+
+```swift
+// 1
+let changeRequest: () -> Void = { [weak self] in
+  guard let self = self else { return }
+  let request = PHAssetChangeRequest(for: self.asset)
+  request.revertAssetContentToOriginal()
+}
+// 2
+let completionHandler: (Bool, Error?) -> Void = { [weak self] success, error in
+  guard let self = self else { return }
+
+  guard success else {
+    print("Error: can't revert the asset: \(String(describing: error))")
+    return
+  }
+  DispatchQueue.main.async {
+    self.undoButton.isEnabled = false
+  }
+}
+// 3
+PHPhotoLibrary.shared().performChanges(
+  changeRequest,
+  completionHandler: completionHandler)
+```
+
+1. 변경 로직을 가지는 변경 요청 블록을 생성한다. 여기서는 `revertAssetContentToOriginal()` 를 호출하고, 이는 기본 상태로 다시 되돌리는 요청이다. 메타 데이터에는 영향을 주지 않는다.
+2. 컴플리션 핸들러는 성공 여부를 검사한 뒤, 성공하면 되돌리기 버튼을 비활성화 한다.
+3. 마지막으로 라이브러리가 변경사항을 수행하도록 지시한다.
+
+되돌리기 버튼을 누르면 위에서 본 것처럼 iOS가 모든 변경사항을 되돌릴지 사용자에게 물어본다.
+
+<img src="https://user-images.githubusercontent.com/48352065/103984564-b5c8a000-51ca-11eb-94f2-2d445f520be4.png" width="40%"> 
 
 
 ## Reference
