@@ -133,11 +133,102 @@ completionHandler: @escaping CompletionHandler
 }
 ```
 
-업로드 예정..
+이제, `URLSessionTaskDelegate` 프로토콜을 구현해보자. 이 프로토콜은 작업 단위 이벤트를 관찰(observe) 할 수 있는 몇가지 메소드를 정의한다. 주어진 `URLSessionTask`의 진행 사항이 업데이트 될 때 사용자에게 알리는 메소드는 다음과 같이 구현할 수 있다. 
+
+```swift
+extension FileUploader: URLSessionTaskDelegate {
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didSendBodyData bytesSent: Int64,
+        totalBytesSent: Int64,
+        totalBytesExpectedToSend: Int64
+    ) {
+        let progress = Double(totalBytesSent) / Double(totalBytesExpectedToSend)
+        let handler = progressHandlersByTaskID[task.taskIdentifier]
+        handler?(progress)
+    }
+}
+```
+
+위와 같이 이제 각 `progressHandler` 클로저에 백분율 값을 전달하여 `ProgressView`, `UIProgressView` 또는 `NSProgressIndicato`와 같은 업로드 진행률을 시각화하는데 사용하는 모든 UI 구성 요소를 구현 할 수 있다.
 
 ## A stream of progress over time
 
+마지막으로 위에서 본 `FileUploader`을 클로저를 사용하는 것에서 Combine을 사용하는 방법으로 바꿔보자. Combine의 "시간 경과에 따른 값"에 초점을 맞춘 디자인은 진행률 업데이트 모델링에 매우 적합하다. 시간이 지남에 따라 여러 백분율 값을 전송 한 다음 완료 이벤트로 끝내고 싶기 때문이다. 이는 바로 Combine 퍼블리셔(publisher)가 하는 역할과 같다.
+
+사용자 정의(custom) 퍼블리셔를 사용하여 이 기능을 구현할 수도 있지만 이 경우에는 값을 캐시하고 모든 새 구독자에게 전송 하는 방식인 `CurrentValueSubject`를 사용하자. 이렇게하면 각 업로드 작업을 주어진 subject와 연결할 수 있고 (이전에 각 `progressHandler` 클로저를 저장 한 방식과 마찬가지로),  `eraseToAnyPublisher` API를 사용하여 해당 subject를 퍼블리셔로 반환 할 수 있습니다.
+
+```swift
+class FileUploader: NSObject {
+    typealias Percentage = Double
+    typealias Publisher = AnyPublisher<Percentage, Error>
+    
+    private typealias Subject = CurrentValueSubject<Percentage, Error>
+
+    private lazy var urlSession = URLSession(
+        configuration: .default,
+        delegate: self,
+        delegateQueue: .main
+    )
+
+    private var subjectsByTaskID = [Int : Subject]()
+
+    func uploadFile(at fileURL: URL,
+                    to targetURL: URL) -> Publisher {
+        var request = URLRequest(
+            url: targetURL,
+            cachePolicy: .reloadIgnoringLocalCacheData
+        )
+        
+        request.httpMethod = "POST"
+
+        let subject = Subject(0)
+        var removeSubject: (() -> Void)?
+
+        let task = urlSession.uploadTask(
+            with: request,
+            fromFile: fileURL,
+            completionHandler: { data, response, error in
+                // Validate response and send completion
+                ...
+                subject.send(completion: .finished)
+                removeSubject?()
+            }
+        )
+
+        subjectsByTaskID[task.taskIdentifier] = subject
+        removeSubject = { [weak self] in
+            self?.subjectsByTaskID.removeValue(forKey: task.taskIdentifier)
+        }
+        
+        task.resume()
+        
+        return subject.eraseToAnyPublisher()
+    }
+}
+```
+
+이제 남은 작업은 `URLSessionTaskDelegate`를 갱신하여 각 진행 값을 업로드 작업과 관련된 subject에게 전송하도록 구현하는 것이다.
+
+```swift
+extension FileUploader: URLSessionTaskDelegate {
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didSendBodyData bytesSent: Int64,
+        totalBytesSent: Int64,
+        totalBytesExpectedToSend: Int64
+    ) {
+        let progress = Double(totalBytesSent) / Double(totalBytesExpectedToSend)
+        let subject = subjectsByTaskID[task.taskIdentifier]
+        subject?.send(progress)
+    }
+}
+```
+
 ## Conclusion
+위에서 본 것처럼 우리가 구현한 작업이 완전한 네트워킹 라이브러리는 아니다. 하지만, `URLSession`이 제공하는 내장 기능이 데이터 게시 또는 파일 업로드를 포함한 다양한 종류의 네트워크 요청을 수행하는 데 필요한 것임을 알 수 있다.
 
 ## Reference
 
