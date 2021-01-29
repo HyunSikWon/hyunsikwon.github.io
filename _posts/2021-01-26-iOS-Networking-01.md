@@ -12,7 +12,7 @@ last_modified_at: 2021-01-26 T19:10:00+08:00
 
 ## Performing POST and file upload requests using URLSession
 
-`URLSession`은 iOS에서 네트워킹 작업을 위한 아주 유용한 API 이다. `URLSession`은 많은 경우에 데이터를 가져오는데(fetch) 사용되는 `GET` 요청에 초점을 맞추지만, 이번에는 `POST` 요청과 관련한 다른 HTTP 메소드를 살펴보자.
+`URLSession`은 iOS에서 네트워킹 작업을 위한 아주 유용한 API 이다. `URLSession`은 대부분 데이터를 가져오는데(fetch) 사용되는 `GET` 요청(request)에 초점을 맞추지만, 이번에는 `POST` 요청과 관련한 HTTP 메소드를 살펴보자.
 
 ## Data and upload tasks
 
@@ -50,7 +50,7 @@ request.httpBody = body
 }
 ```
 
-또는,  `uploadTask` API를 사용하여 요청 작업을 생성할 수도 있다. 앱이 백그라운드에있는 동안 데이터를 업로드 할 수 있고 작업 자체에 본문 데이터(body data)를 직접 첨부(attaching)하기위한 빌트인 지원을 제공하기도 한다.
+또는, `uploadTask` API를 사용하여 요청 작업을 생성할 수도 있다. 앱이 백그라운드에있는 동안 데이터를 업로드 할 수 있고 작업 자체에 본문 데이터(body data)를 직접 첨부(attaching)하기 위한 빌트인 지원을 제공하기도 한다.
 
 ```swift
 struct Networking {
@@ -84,7 +84,7 @@ struct Networking {
 
 ## Observing progress updates
 
-`POST` 요청으로 적은 양의 데이터를 보낼 때는 위의 두 가지 접근 방식은 완벽하게 작동하지만 때로는 잠재적으로 매우 큰 파일을 업로드하고 싶을 수 있다. 그렇게하면 앱의 UI가 느리거나 응답하지 않는 것처럼 보일 수 있으므로 사용자가 실시간 진행을 확인할 수 있도록 다. 이는 델리게이트 패턴을 사용하여 매우 쉽게 구현할 수 있다.
+`POST` 요청으로 적은 양의 데이터를 보낼 때는 위의 두 가지 접근 방식은 완벽하게 작동하지만 때로는 잠재적으로 매우 큰 파일을 업로드하고 싶을 수 있다. 이 상황에선 앱의 UI가 느리거나 응답하지 않는 것처럼 보일 수 있으므로 사용자가 실시간 진행을 확인할 수 있도록 해야한다. 이는 델리게이트 패턴을 사용하여 매우 쉽게 구현할 수 있다.
 
 이를 구현하기 위해 `FileUploader` 클래스 (Objective-C의 `NSObject`의 하위 클래스 여야 함)를 만들어 보자. 그런 다음 `shared`가 아닌 커스텀 `URLSession` 인스턴스를 사용하면 해당 세션의 위임자(delegate)가 될 수 있다. 지정된 로컬 URL에 파일을 업로드 할 수 있는 API를 정의하고 해당 API의 호출자가 진행(progress) 이벤트 처리와 컴플리션 핸들러를 위한 두 개의 클로저를 전달한다. 마지막으로, 각 업로드 딕셔너리에 작업의 ID를 기반으로 모든 진행 이벤트 핸들러를 미리 저장하면, 델리게이트 프로토콜 구현 내에서 이러한 클로저를 호출 할 수 있다.
 
@@ -157,7 +157,7 @@ extension FileUploader: URLSessionTaskDelegate {
 
 마지막으로 위에서 본 `FileUploader`을 클로저를 사용하는 것에서 Combine을 사용하는 방법으로 바꿔보자. Combine의 "시간 경과에 따른 값"에 초점을 맞춘 디자인은 진행률 업데이트 모델링에 매우 적합하다. 시간이 지남에 따라 여러 백분율 값을 전송 한 다음 완료 이벤트로 끝내고 싶기 때문이다. 이는 바로 Combine 퍼블리셔(publisher)가 하는 역할과 같다.
 
-사용자 정의(custom) 퍼블리셔를 사용하여 이 기능을 구현할 수도 있지만 이 경우에는 값을 캐시하고 모든 새 구독자에게 전송 하는 방식인 `CurrentValueSubject`를 사용하자. 이렇게하면 각 업로드 작업을 주어진 subject와 연결할 수 있고 (이전에 각 `progressHandler` 클로저를 저장 한 방식과 마찬가지로),  `eraseToAnyPublisher` API를 사용하여 해당 subject를 퍼블리셔로 반환 할 수 있습니다.
+사용자 정의(custom) 퍼블리셔를 사용하여 이 기능을 구현할 수도 있지만 이 경우에는 값을 캐시하고 모든 새 구독자에게 전송 하는 방식인 `CurrentValueSubject`를 사용하자. 이렇게하면 각 업로드 작업을 주어진 subject와 연결할 수 있고 (이전에 각 `progressHandler` 클로저를 저장 한 방식과 마찬가지로),  `eraseToAnyPublisher` API를 사용하여 해당 subject를 퍼블리셔로 반환 할 수도 있다.
 
 ```swift
 class FileUploader: NSObject {
