@@ -45,7 +45,7 @@ last_modified_at: 2020-12-17 T15:00:00+08:00
 
 ## MVC
 
-이미지: Traditional MVC
+![1*E9A5fOrSr0yVmc7Kly5C6A](https://user-images.githubusercontent.com/48352065/108462668-5cbb5400-72c0-11eb-8fa8-c6386808128f.png)
 
  전통적인 MVC는 3개의 개체가 강하게 결합되어 있기 때문에 각각의 개체는 다른 두개의 개체를 알고 있어야한다. 이는 각각의 개체의 재사용성을 떨어트리기 때문에 앱에 적용하기 적절치 않다.
 
@@ -53,13 +53,13 @@ last_modified_at: 2020-12-17 T15:00:00+08:00
 
 ## Apple's MVC
 
-이미지: Cocoa MVC
+![1*c0aGaDNX41qu6e8E4OEgwQ](https://user-images.githubusercontent.com/48352065/108462666-5c22bd80-72c0-11eb-99bf-7d536d5c0926.png)
 
 `Controller`는 `View`와 `Model` 사이의 중재자 역할을 하고 따라서 `View`와 `Model`은 서로에 대해 알고 있을 필요가 없다. 여기서 가장 재사용성이 떨어지는 것은 `Controller`인데, 우리는 `Model`에 넣기에는 적절하지 않은 복잡한 로직들을 위한 장소가 필요하기 때문에 상관 없다.
 
 *하지만 현실은....*
 
-이미지: Realistic Cocoa MVC
+![1*PkWjDU0jqGJOB972cMsrnA](https://user-images.githubusercontent.com/48352065/108462665-5c22bd80-72c0-11eb-8a1e-94f164a4ccac.png)
 
 하지만 view controller는 따로 분리하기 어려운 `View`의 life cycle과  얽혀있기 때문에 Cocoa MVC는 Massive View Controller를 유발한다. 비록 몇몇 로직과 데이터 변환을 `Model`에 넘겼지만, 대부분의 경우 `View`의 역할은 `Controller`에 action을 보내는 것이기 때문에 `View`와 관련된 작업을 분리하는 것은 쉽지 않다. View controller는 결국 여러 `View`와 관련한 작업과 네트워킹 작업 등으로 인해 Massive View Controller가 될수 밖에 없다.
 
@@ -84,7 +84,7 @@ userCell.configureWithUser(user)
 
 ## MVP
 
-이미지: Passive View variant of MVP
+![1*hKUCPEHg6TDz6gtOlnFYwQ](https://user-images.githubusercontent.com/48352065/108462664-5af19080-72c0-11eb-84a3-768b3194a67a.png)
 
 MVP 패턴은 Apple의 MVC와 매우 유사한 모습을 보이지만 Apple의 MVC가 사실 MVP라는 의미는 아니다. Cocoa MVC는 View와 Controller가 강하게 결합되는데 반해, MVP의 중재자 `Presenter`는 view controller의 생명주기와 아무런 관계가 없다. 따라서 테스트를 위한 `View`를 쉽게 만들 수 있고, layout과 관련한 코드는 더 이상 `Presenter`에 존재하지 않는다. `Presenter`는 단지 `View`의 데이터와 상태를 갱신하기위한 역할만 한다.
 
@@ -102,7 +102,7 @@ MVP의 특징:
 
 MV(X) 중 가장 최신이자 훌륭한 방식이다. MVVM에서 `Model`과 `View`는 우리가 지금까지 살펴본 방식과 같고, 중재자의 역할은 `ViewModel`이 담당한다. 또한, MVVM에서는 `View`와 `ViewModel `사이에는 데이터 바인딩이 존재한다. 
 
-이미지: MVVM 
+![1*uhPpTHYzTmHGrAZy8hiM7w](https://user-images.githubusercontent.com/48352065/108462655-588f3680-72c0-11eb-81aa-48edabeac6ce.png)
 
 MVVM은 MVP와 유사한 형태를 띈다.
 
