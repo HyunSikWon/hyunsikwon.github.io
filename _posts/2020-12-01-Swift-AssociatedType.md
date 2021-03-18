@@ -16,7 +16,7 @@ iOS 개발 공부 중 `associatedtype` 을 사용하게 되었는데, 이를 이
 
 ## Associated Type
 
-프로토콜을 정의할 때, 몇몇을 associated type으로 선언하면 매우 유용할 때가 있다. *associated type* 은 프로토콜의 일부로 사용되는 타입을 위한 placeholder 역할을 한다. associated type은 정의하는 프로토콜이 채택되기 전까지 실제 타입이 명시되지 않는다. Associated type은 `associatedtype` 키워드를 사용해서 정의한다.
+프로토콜을 정의할 때, 몇몇을 associated type으로 선언하면 매우 유용할 때가 있다. associated type은 프로토콜의 일부로 사용되는 타입을 위한 placeholder 역할을 한다. associated type은 정의하는 프로토콜이 채택되기 전까지 실제 타입이 명시되지 않는다. Associated type은 `associatedtype` 키워드를 사용해서 정의한다.
 
 ## Associated Types in Action
 
@@ -107,11 +107,11 @@ protocol Container {
 }
 ```
 
-이 프로토콜을 준수하기 위해서, 컨테이너의 `Item` 타입은 `Equatable` 프로토콬ㄹ을 준수해야 한다.
+이 프로토콜을 준수하기 위해서, 컨테이너의 `Item` 타입은 `Equatable` 프로토콜을 준수해야 한다.
 
 ## Using a Protocl in Its Associated Type's Constraints
 
-프로토콜은 자기 자신의 요구사항의 일부로 표현될 수 있다. 예를들어, 다음은 `Container` 프로토콜에 `suffix(*:)`*  메소드를 추가하여 기존의 프로토콜을 개선한 코드이다. **`suffix(_:)`는 컨테이너의 끝에서부터 주어진 개수의 요소를 반환하여, `Suffix` 타입의 인스턴스에 저장하는 메소드이다. 
+프로토콜은 자기 자신의 요구사항의 일부로 표현될 수 있다. 예를들어, 다음은 `Container` 프로토콜에 `suffix(_:)`  메소드를 추가하여 기존의 프로토콜을 개선한 코드이다. `suffix(_:)`는 컨테이너의 끝에서부터 주어진 개수의 요소를 반환하여, `Suffix` 타입의 인스턴스에 저장하는 메소드이다. 
 
 ```swift
 protocol SuffixableContainer: Container {
