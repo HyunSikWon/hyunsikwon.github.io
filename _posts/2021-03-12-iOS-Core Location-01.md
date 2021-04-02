@@ -12,11 +12,11 @@ last_modified_at: 2021-03-12 T15:21:00+08:00
 
 ## Introductions
 
-이번 튜토리얼에서는 iOS 위치기반 API인 Core Location을 사용하여 간단한 여행 기록 앱을 만든다. 이 앱은 자동으로 방문한 위치를 추적한다. 
+이 튜토리얼은 iOS 위치기반 API인 Core Location을 사용한 간단한 여행 기록 앱이다.  
 
-앱의 주요 기능:
+앱의 주요 기능은 다음과 같다:
 
-- 사용자의 위치를 추적한다(앱이 실행 중이 아닐때도).
+- 사용자의 위치를 자동으로 추적한다(앱이 실행 중이 아닐때도).
 - 앱이 새로운 위치를 기록하면, 사용자에게 로컬 알림을 보낸다.
 - 위치들을 파일에 저장한다.
 - 기록된 위치를 표시한다.
@@ -25,11 +25,11 @@ last_modified_at: 2021-03-12 T15:21:00+08:00
 
 ## Getting Started
 
-앱은 기록된 위치를 나타내는 테이블 뷰와 지도 뷰로 구성되며 탭바를 통해 구분한다.
+앱은 기록된 위치를 나타내는 테이블 뷰와 지도 뷰로 구성되며 탭바를 통해 구분된다.
 
 ### AppDelegate.swift
 
-`AppDelegate.swift` 파일을 살펴보면, 두 개의 프레임워크를 임포트했다.
+`AppDelegate.swift` 파일을 살펴보면, 두 개의 프레임워크를 import 했다.
 
 ```swift
 import CoreLocation
@@ -44,10 +44,6 @@ import UserNotifications
 let center = UNUserNotificationCenter.current()
 let locationManager = CLLocationManager()
 ```
-
-### PlacesTableViewController.swift & MapViewController.swift
-
-첫 번째 탭은 테이블 뷰로, 두번째 탭은 맵뷰로 구성된다.
 
 ### Location.swift
 
@@ -90,7 +86,7 @@ private(set) var locations: [Location]
 
 ### Providing a Proper Description
 
-위치 정보를 얻기 위해 두 문자열을 `Info.plist` 파일에 추가해야 한다.
+위치 정보를 얻기 위해 다음을 `Info.plist` 파일에 추가해야 한다.
 
 <img width="499" alt="Screen-Shot-2018-04-15-at-9 21 50-PM" src="https://user-images.githubusercontent.com/48352065/110900832-bc000780-8346-11eb-835b-b919f898b8f1.png">
 
@@ -103,7 +99,7 @@ private(set) var locations: [Location]
 
 ### Asking for Locations Permissions
 
-`AppDelegate.swift` 파일에 `application(_:didFinishLaunchingWithOptions:)`의 반환 전 다음 코드를 추가하자:
+`AppDelegate.swift` 파일의 `application(_:didFinishLaunchingWithOptions:)` 내부에 다음의 코드를 추가하자:
 
 ```swift
 locationManager.requestAlwaysAuthorization()
@@ -115,7 +111,7 @@ locationManager.requestAlwaysAuthorization()
 
 ### Asking for Notifications Permissions
 
-사용자에게 알림을 보내기 위해서도 허가 요청이 필요하다. 알림의 경우 다른 문자열을 추가할 필요는 없지만, 위에서 추가한 코드 바로 위에 다음 코드를 추가하자:
+사용자에게 알림을 보내기 위해서도 허가 요청이 필요하다. 알림의 경우 다른 문자열을 추가할 필요는 없다. 위에서 추가한 코드 바로 위에 다음 코드를 추가하자:
 
 ```swift
 center.requestAuthorization(options: [.alert, .sound]) { granted, error in
@@ -130,7 +126,7 @@ Core Location 프레임워크는 다양한 방법을 통해 사용자의 위치�
 - Significnat locatoin changes: 중간 정도의 배터리 소모. 중간 정도의 정확도. 정지 상태에 대한 낮은 정확도.
 - Regional monitoring: 적은 배터리 소모. 좋은 위치 정확도. 위치를 모니터할 수 있는 지역이 정해져 있다.
 
-모두가 완전히 앱에 적절한 방법은 아니다. 다행이도.. 한가지 다른 API를 사용할 수 있다.
+3가지 모두가 이 튜토리얼에서 만드는 앱에 적절한 방법이 아니다. 다행이도.. 한가지 다른 API를 사용할 수 있다.
 
 ### Visit Monitoring
 
@@ -185,11 +181,9 @@ extension AppDelegate: CLLocationManagerDelegate {
 init(_ location: CLLocationCoordinate2D, date: Date, descriptionString: String)
 ```
 
-`descriptionString`가 필요하다!
-
 ### Location Description
 
-디스크립션을 위해서 `CLGeocoder`를 사용한다. Geocoding은 좌표를 실제 주소 혹은 이름으로 변환하는 과정이다. 좌표 집합에서 주소를 얻기 위해선 리버스 지오코딩을 사용하면 된다.
+`descriptionString`을 위해서 `CLGeocoder`를 사용한다. Geocoding은 좌표를 실제 주소 혹은 이름으로 변환하는 과정이다. 좌표 집합에서 주소를 얻기 위해선 리버스 지오코딩을 사용하면 된다.
 
 `AppDelegate.swift`에 다음 프로퍼티를 추가한다.
 
@@ -232,8 +226,6 @@ center.add(request, withCompletionHandler: nil)
 1. 알림(notification) 컨텐츠를 생성한다.
 2. 1초 길이의 트리거를 생성하고, 알림 요청을 이 트리거와 함께 생성한다.
 3. notification center에 요청을 추가하여 알림을 예약한다.
-
-## Faking Data (Optional) - 생략
 
 ## Persisting Location Data
 
