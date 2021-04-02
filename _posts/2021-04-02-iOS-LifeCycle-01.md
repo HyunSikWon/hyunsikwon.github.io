@@ -14,15 +14,14 @@ iOS 앱에서 나타나는 여러 생명주기를 다뤄봤습니다.
 
 ## About the App Lauch Seqeunce
 
-**앱이 실행되어 초기화되기 까지의 순서.**
+앱이 처음 실행되어 초기화되기 까지의 순서는 다음과 같다.
 
-1. 앱이 사용자 혹은 시스템에 의해 실행된다(launch).
+1. 먼저 앱이 사용자 혹은 시스템에 의해 실행된다(launch).
 2. `main` 함수가 UIKit의 `UIApplicationMain(_:_:_:_:)` 함수를 호출한다.
 3. `UIApplicationMain(_:_:_:_:)`을 통해 `UIApplication`객체와 app delegate가 생성된다.
     - `UIApplication`은 싱글톤 객체로 `shared`를 통해 접근 가능하다.
     - `UIApplication` 객체는 이벤트 큐의 이벤트를 전달하는(routing) 역할을 한다. 컨트롤 객체 (`UIControl` 클래스의 인스턴스)에 의해 전달된 액션 메시지를 적절한 타켓 객체에 전달한다.
-    - main run loop가 끝나는 시점에 view의 update cycle이 시작된다.
-    - `UIApplication` 객체가 app delegate를 정의하여 몇가지 런타임 이벤트를 app delegate에 알린다.
+    - `UIApplication` 객체가 app delegate를 정의하 몇 가지 런타임 이벤트를 app delegate에 알린다.
 4. UIKit이 앱의 디폴트 인터페이스를 main 스토리보드 혹은 nib 파일에서 불러온다.
 5. UIKit이 app delegate의 `application(_:willFinishLaunchingWithOptions:)` 메소드를 호출한다.
 6. UIKit은 추가적인 app delegate와 뷰 컨트롤러의 메소드를 호출하여 상태 복구를 수행한다.
@@ -70,7 +69,7 @@ iOS는 다음과 같은 `UIViewController` 메소드를 호출한다:
 - 스크롤하여 뷰를 벗어났다 돌아온 경우.
 - 뷰에서 명시적으로 `setNeedsDisplay` 혹은 `setNeedsDisplayInRect:` 메소드를 호출한 경우.
 
-런루프가 종료된 후 진행되는 뷰의 실제 드로잉 작업은 뷰와 뷰의 구성에 따라 다르다. 시스템 뷰는 보통 프라이빗 드로잉 메소드를 사용하여 자동으로 컨텐츠를 렌러딩하고, 커스텀 뷰(`UIView` 서브클래스)는 보통 `drawRect:` 메소드를 오버라이드해서 뷰의 컨텐츠를 그리는데 사용한다.
+런루프가 종료된 후 진행되는 뷰의 실제 드로잉 작업은 뷰와 뷰의 구성에 따라 다르다. 시스템 뷰는 보통 프라이빗 드로잉 메소드를 사용하여 자동으로 컨텐츠를 렌더링하고, 커스텀 뷰(`UIView` 서브클래스)는 보통 `drawRect:` 메소드를 오버라이드해서 뷰의 컨텐츠를 그리는데 사용한다.
 
 ## Reference
 
