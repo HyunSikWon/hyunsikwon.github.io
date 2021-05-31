@@ -15,7 +15,7 @@ last_modified_at: 2020-12-16 T22:37:00+08:00
 
 ## **AVFoundation**
 
-`AVFoundatoin`은 iOS, tvOS, macOS를 위한 미디어 프레임 워크다. 이를 통해서 편집, low-level 처리 등 다양한 미디어 처리 작업을 위해 사용할 수 있는데, 특히 media 재생을 위해서 가장 많이 사용된다. `AVFoundation`을 사용하면 MP3 오디오 파일 부터 HTTP Live Streaming을 통한 미디어 파일 등 다양한 미디어 자원을 효율적으로 로드하고 관리 할 수 있다.
+`AVFoundatoin`은 iOS, tvOS, macOS를 위한 미디어 프레임 워크이다. 우리는 이 프레임 워크를 편집, low-level 처리 등 다양한 미디어 처리 작업을 위해 사용할 수 있는데, 특히 media 재생을 위해서 가장 많이 사용된다. `AVFoundation`을 사용하면 MP3 오디오 파일 부터 HTTP Live Streaming을 통한 미디어 파일 등 다양한 미디어 자원을 효율적으로 로드하고 관리 할 수 있다.
 
 ![avfoundation1](https://user-images.githubusercontent.com/48352065/94444267-1cf4b280-01e1-11eb-89be-f46488e4b2f1.png)
 
@@ -23,7 +23,7 @@ last_modified_at: 2020-12-16 T22:37:00+08:00
 
 `AVFoundation` 프레임 워크는 `AVAsset` 클래스를 사용해서 자원들을 모델링 한다. `AVAsset` 클래스는 추상 클래스로 단일 미디어 자원을 나타내는 불변의 타입이다. `AVAsset`의 인스턴스는 로컬에 있는 미디어 파일을 구성할 수 있고 원격에서 다운로드 받은 파일, HLS를 통해 스트리밍 되는 파일 또한 표현할 수 있다.
 
-`AVAsset`은 두 가지 방식으로 미디어 작업을 단순화한다. 먼저, 미디어의 포맷으로부터의 독립성을 제공한다. 미디어 포맷 타입과 관련없이 미디어 파일을 관리할 수 있게 도와주고 포맷과 관련한 세부 작업이나 코텍 작업은 프레임워크로 넘겨준다. 두번째로, 미디어의 위치로부터의 독립성을 제공한다. Asset 인스턴스를 미디어의 URL을 통해 초기화 할 수 있는데, 이 URL은 앱 번들이나 파일 시스템 어딘가에 있는 로컬 url 일수도 있고, 원격 host에서 제공될 수도 있다.이러한 **미디어 포맷으로부터의 독립성, 미디어의 위치로부터의 독립성**은 개발자의 시청각 미디어 작업을 크게 단순화해준다.
+`AVAsset`은 두 가지 방식으로 미디어 작업을 단순화한다. 먼저, 미디어의 포맷으로부터의 독립성을 제공한다. 미디어 포맷 타입과 관련없이 미디어 파일을 관리할 수 있게 도와주고 컨테이너 포맷과 관련한 세부 작업이나 코덱 작업은 프레임워크로 넘겨준다. 두번째로, 미디어의 위치로부터의 독립성을 제공한다. Asset 인스턴스를 미디어의 URL을 통해 초기화 할 수 있는데, 이 URL은 앱 번들이나 파일 시스템 어딘가에 있는 로컬 url 일수도 있고, 원격 host에서 제공될 수도 있다.이러한 **미디어 포맷으로부터의 독립성, 미디어의 위치로부터의 독립성**은 개발자의 시청각 미디어 작업을 크게 단순화해준다.
 
 
 `AVAsset`은 하나 이상의 `AVAssetTrack` 인스턴스로 구성된다. 각 트랙은 tracks 프로퍼티로 접근할 수 있다.
@@ -51,7 +51,7 @@ let asset = AVURLAsset(url: url, options: options)
 
 ## **Preparing Asset For Use**
 
-`AVAsset`의 프로퍼티들을 사용하여 미디어를 재생하는데 적절한지 여부, 길이, 생성일, meta data와 같은 asset의 특성과 기능 등을 결정할 수 있다. 프로퍼티의 값들은 asset을 생성할 때 자동으로 생성되는 것이 아니라 값들이 요청될 때 불러진다. 프로퍼티에 접근하는 것은 synchronous하기 때문에 만약 프로퍼티의 값이 이전에 로드된적이 없다면, framework는 값을 반환하기 위해 많은 양의 작업을 수행해야 할 것이다. 만약, 로드된 적 없는 프로퍼티 값을 요청하는 작업이 오래 블럭된다면 이는 미디어 작업에 큰 문제를 줄 수 있다. 따라서 asset의 프로퍼티 값을 불러오는 것은 반드시 asynchronous하게 해야 한다.
+`AVAsset`의 프로퍼티들을 사용하여 미디어를 재생하는데 적절한지 여부, 길이, 생성일, meta data와 같은 asset의 특성과 기능 등을 결정할 수 있다. 프로퍼티의 값들은 asset을 생성할 때 자동으로 생성되는 것이 아니라 값들이 요청될 때 로드된다. 프로퍼티에 접근하는 것은 synchronous하기 때문에 만약 프로퍼티의 값이 이전에 로드된적이 없다면, framework는 값을 반환하기 위해 많은 양의 작업을 수행해야 할 것이다. 만약, 로드된 적 없는 프로퍼티 값을 요청하는 작업이 오래 블럭된다면 이는 미디어 작업에 큰 문제를 줄 수 있다. 따라서 asset의 프로퍼티 값을 불러오는 것은 반드시 asynchronous하게 해야 한다.
 
 `AVAsset`과 `AVAssetTrack`은 `AVAsynchronousKeyValueLoading` 프로토콜을 채택한다. 이 프로토콜은 현재 프로퍼티의 상태와 비동기적으로 하나 이상의 프로퍼티 값을 불러오는 메소드를 정의한다.
 
@@ -90,17 +90,17 @@ asset.loadValuesAsynchronously(forKeys: [playableKey]) {
 
 ## **Working with Metadata**
 
-미디어 데이터는 데이터에 대한 metadata를 담고있다. metadata를 활용하는 것은 쉽지 않지만 `AVFoundation`은 `AVMetaDataItem` 클래스를 이용해서 metadata와 관련한 작업을 단순화 해준다. `AVMetaDataItem`의 인스턴스는 key-value 쌍으로 이루어지면서 영화의 제목 등과 같은 단일 metadata를 표현한다.
+미디어 컨테이너 포맷은 미디어에 대한 metadata를 담고있다. 컨테이너 포맷은 각각의 고유한 메타데이터 포맷을 가지고, 로우 레벨한 이해가 필요해서 메타데이터를 통한 작업은 매우 어려운 일이다, 그러나  `AVFoundation`은 `AVMetaDataItem` 클래스를 이용해서 metadata와 관련한 작업을 단순화 해준다. `AVMetaDataItem`의 인스턴스는 key-value 쌍으로 이루어지면서 영화의 제목 등과 같은 단일 metadata를 표현한다.
 
 ### Retrieving a Collection of Metadata
 
-metadata를 쉽게 찾고 구분하기위해서 `AVFoundation` 프레임워크는 관련된 metadata를 key spaces로 그룹화 한다.
+`AVFoundation` 프레임워크는 metadata를 쉽게 찾고 구분하기위해서 관련된 metadata를 key spaces로 그룹화 한다.
 
-**Format-specific key spaces:** QuickTime이나 MP3같은 특정 container 혹은 file format과 연관된 metadata의 키 값이다. `metadata` 프로퍼티로 접근할 수 있다.
+**Format-specific key spaces:** QuickTime이나 MP3같은 특정 container 혹은 file format과 연관된 metadata의 키 값이다. 하나의 `AVAsset` 메타데이터는 여러 key spaces에 분포되어 존재할 수 있다. 이렇게 여러 key spaces에 분포되어있는 하나의 `AVAsset` 메타데이터들 집합은 `metadata` 프로퍼티를 통해 접근이 가능하다.
 
-**Common key space:** 영화의 개봉일 같은 보통의 정보들과 관련된 key로 `commonMetadata` 프로퍼티로 접근할 수 있다.
+**Common key space:** 영화의 개봉일 같은 포맷에 상관없는 여러 공통 정보들과 관련된 key로 `commonMetadata` 프로퍼티로 접근할 수 있다.
 
-asset이 어떤 metadata를 포함하고 있는지는 `availableMetadataFormats` 프로퍼티를 통해 알 수 있다. 이 프로퍼티는 metadata를 구분하는 식별자를 담은 문자열 타입의 배열을 반환해준다. format-specific metadata를 얻기 위해선 다음과 같이적절한 format 식별자를 파라미터로 보내는 `metadataForFormat:` 메소드를 이용한다:
+asset이 어떤 metadata를 포함하고 있는지는 `availableMetadataFormats` 프로퍼티를 통해 알 수 있다. 이 프로퍼티는 metadata를 구분하는 식별자를 담은 문자열 타입의 배열을 반환해준다. format-specific metadata를 얻기 위해선 다음과 같이 적절한 format 식별자를 파라미터로 보내는 `metadataForFormat:` 메소드를 이용한다:
 
 ```swift
 let url = Bundle.main.url(forResource: "audio", withExtension: "m4a")!
@@ -133,9 +133,9 @@ if let item = titleItems.first {
 }
 ```
 
-필요한 metadata를 얻었으면 다음은 그것의 value 프로퍼티를 활용할 차례다. 반환된 타입은 `NSObject`와 `NSCopying` 프로토콜을 채택한 객체 타입이고 원하는 적절한 타입으로 변환할 수 있다. 하지만 metadata의 [stringValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1390846-stringvalue),[numberValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1390681-numbervalue),[dateValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1385563-datevalue), and [dataValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1387641-datavalue) 프로퍼티를 사용하는게 더 안전하고 쉽다.
+필요한 metadata를 얻었으면 다음은 그것의 value 프로퍼티를 활용할 차례다. 반환된 타입은 `NSObject`와 `NSCopying` 프로토콜을 채택한 객체 타입이고 원하는 적절한 타입으로 변환할 수 있다. 하지만 metadata의 [stringValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1390846-stringvalue),[numberValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1390681-numbervalue),[dateValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1385563-datevalue), and [dataValue](https://developer.apple.com/documentation/avfoundation/avmetadataitem/1387641-datavalue) 프로퍼티를 사용하는게 더 안전하고 쉽다.
 
-다음 예제코드에선 `datavalue` 프로퍼티를 사용한다.
+다음 예제코드에선 `dataValue` 프로퍼티를 사용한다.
 
 ```swift
 // Collection of "common" metadata
@@ -169,13 +169,13 @@ Asset은 미디어 재생을 위해 필수적이지만 이는 하나의 모델�
 
 ### AVPlayerItem
 
-`AVAsset`은 길이, 생성날짜와 같은 미디어의 정적인 측면만 모델링하기 때문에 실제 재생을 위해선 동적인 성격인 `AVPlayerItem` 인스턴스가 필요하다. 이는 `AVPlayer`에 의해 재생되는 asset의 재생 상태, 타이밍을 모델링한다. `AVPlayerItem`의 메소드와 프로퍼티를 이용하면 미디어의 다양한 시간대를 탐색할 수 있고, 크기, 미디어의 현재 시간 등을 찾을 수 있다.
+`AVAsset`은 길이, 생성 날짜와 같은 미디어의 정적인 측면만 모델링하기 때문에 실제 재생을 위해선 동적인 성격인 `AVPlayerItem` 인스턴스가 필요하다. 이는 `AVPlayer`에 의해 재생되는 asset의 재생 상태, 타이밍을 모델링한다. `AVPlayerItem`의 메소드와 프로퍼티를 이용하면 미디어의 다양한 시간대를 탐색할 수 있고, 크기, 미디어의 현재 시간 등을 찾을 수 있다.
 
 ### AVKit and AVPlayerLayer
 
 `AVPlayer`와 `AVPlayerItem`은 눈에 보이지 않는 객체이고 이들 자체로는 미디어의 영상을 화면에 표시할 수 없다. 미디어의 영상을 화면에 표시할 수 있는 두 가지 방법이 존재한다.
 
-- **AVKit:** 영상을 화면에 표시하기 위해선, `AVKit` 프레임워크의 `AVPlayerViewController`를 iOS, tvOS에서 사용하고 `AVPlayerView`를 macOS에서 사용하는 것이 가장 좋은 방법이다. 이 객체들은 다양한 기능을 제공한다.
+- **AVKit:** 영상을 화면에 표시하기 위해선, `AVKit` 프레임워크의 `AVPlayerViewController`를 iOS, tvOS에서, `AVPlayerView`를 macOS에서 사용하는 것이 가장 좋은 방법이다. 이 객체들은 다양한 기능을 제공한다.
 
 - **AVPlayerLayer:** 커스텀 플레이어를 만들고 싶다면 `AVFoundation`이 제공하는 `AVPlayerLayer`을 사용하면 된다. Player layer를 뷰의 하위 layer나 layer 계층 구조에 추가할 수 있다. 하지만 재생 관리를 위한 기능을 제공하지 않고 화면에 보여주는 역할만 하기 때문에 play, pause 버튼과 같은 컨트롤러는 직접 구현해야 한다.
 
@@ -219,7 +219,7 @@ class PlayerViewController: UIViewController {
 
 `AVPlayer`와 `AVPlayerItem`은 상태가 빈번하게 변화하는 동적인 객체이다. 객체의 변화에 따라 다양한 동작을 취할 수 있는데 이는 KVO를 사용해서 이루어진다. KVO는 한 객체가 다른 객체의 상태를 관찰할 observer를 생성하고 객체의 상태 변화가 생기면 observer가 세부 상태를 알리는 형태로 동작한다. 이러한 KVO를 사용하여 `AVPlayer`과 `AVPlayerITem`의 상태 변화를 추적하고 그에따른 적절한 조치를 취할 수 있다. 
 
-`AVPlayerItem`의 가장 중요한 프로퍼티 중 하나는 `status`다. `status`는 사용 가능하고 재생을 위한 준비가 되었는지를 나타낸다. player item을 처음 생성하면 `status` 값은 `AVPlayerItemStatusUnknow`의 값이고 이는 media가 아직 완전히 로드가 되지 않았거나 재생할 준비가 안됐다는 의미이다. player item이 재생될 준비가 되면 `status`는 `AVPlayerItemStatusReadyToPlay`로 변한다. 다음 코드는 상태 변화를 어떻게 추적하는지를 보여준다.
+`AVPlayerItem`의 가장 중요한 프로퍼티 중 하나는 `status`다. `status`는 현재 플레이어의 미디어 데이터가 재생할 준비가 되어있는지를 판단할 때 사용한다. player item을 처음 생성하면 `status` 값은 `AVPlayerItemStatusUnknow`의 값이고 이는 media가 아직 완전히 로드가 되지 않았거나 재생할 준비가 안됐다는 의미이다. player item이 재생될 준비가 되면 `status`는 `AVPlayerItemStatusReadyToPlay`로 변한다. 다음 코드는 상태 변화를 어떻게 추적하는지를 보여준다.
 
 ```swift
 let url: URL = // Asset URL
@@ -256,7 +256,7 @@ func prepareToPlay() {
 }
 ```
 
-prepareToPlay 메소드는 player item의 상태를 추적하기위해 `addObserver:forKeyPath:options:context:` 메소드를 사용한다. item의 모든 상태변화를 추적하기 위해선 이 메소드를 반드시 player item과 player의 연결 전에 사용해야 한다. 상태변화에 따른 알림을 받기 위해선 `observeValueForKeyPath:ofObject:change:context:` 메소드를 구현해야한다. 이 메소드는 상태 변화가 이루어질 때마다 호출되어 그에 따른 적절한 조치를 취할 수 있다.
+prepareToPlay 메소드는 player item의 상태를 추적하기위해 `addObserver:forKeyPath:options:context:` 메소드를 사용한다. item의 모든 상태변화를 추적하기 위해 이 메소드를 반드시 player item과 player의 연결 전에 사용해야 한다. 상태 변화에 따른 알림을 받기 위해선 `observeValueForKeyPath:ofObject:change:context:` 메소드를 구현해야한다. 이 메소드는 상태 변화가 이루어질 때마다 호출되어 그에 따른 적절한 조치를 취할 수 있다.
 
 
 apple의 예제 코드:
@@ -300,7 +300,7 @@ override func observeValue(forKeyPath keyPath: String?,
 
 미디어 재생은 시간 기반 작업이고 `AVPlayer`와 `AVPlayerItem`의 대부분의 특징은 미디어의 시간을 관리하는 것과 연관되어있다. 이러한 특징들을 효율적으로 사용하기 위해선 `AVFoundation`에서 시간이 어떻게 표현되는지 이해해야 한다.
 
-`AVFoundation`의 몇몇을 포함한 많은 Apple 프레임워크에선 시간을 초를 나타내는 부동소수점의 `NSTimeInterval` 값으로 표현하고. 많은 경우에는 이 값을 통해 시간을 표현하기가 쉽지만 미디어의 시간을 나타낼 때는 종종 문제가 생긴다. 이런 문제를 해결하기 위해 `AVFoundation`은 Core Media 프레임워크의 `CMTime` 데이터 타입을 사용해 시간을 표현한다.
+`AVFoundation`의 몇몇을 포함한 많은 Apple 프레임워크에선 시간을 초를 나타내는 부동소수점의 `NSTimeInterval` 값으로 표현하고. 많은 경우에는 이 값을 통해 시간을 표현하기가 쉽지만 디테일한 시간의 작업이 필요한 미디어 재생에서는 종종 문제가 생긴다. 이런 문제를 해결하기 위해 `AVFoundation`은 Core Media 프레임워크의 `CMTime` 데이터 타입을 사용해 시간을 표현한다.
 
 ```swift
 public struct CMTime {
@@ -310,8 +310,11 @@ public struct CMTime {
     public var epoch: CMTimeEpoch
 }
 ```
+- CMTimeValue : 64 비트 정수로 분수로 표현되는 시간의 분자 값을 정의
+- CMTimeScale : 32비트 정수로 분모 값을 정의
 
 이 구조체는 시간을 유리수나 분수의 형태로 표현한다. `CMTime`의 두 가지 중요한 속성은 `value`와 `timescale` 이다. 이 구조체를 통해 미디어의 frame rate혹은 sample rate 측면에서의 시간을 쉽게 표현할 수 있다.
+
 
 ```swift
 // 0.25 seconds
@@ -326,13 +329,13 @@ let cursor = CMTime(value: 90, timescale: 30)
 
 ### **Observing Time**
 
-미디어의 재생과정에서 재생 위치를 업데이트하거나 UI의 상태와 일치시키기 위해  재생 시간을 추적한다. KVO를 통해 재생 객체의 상태 변화를 관찰하는 것을 앞에서 봤지만 지속적인 상태 변화를 추적하는데는 적절한 기법이 아니다. 대신 `AVPlayer`는 player의 시간 변화를 추적하는 두 가지 방법을 제공한다: periodic observations, boundary observations.
+미디어의 재생 과정에서 재생 위치를 업데이트하거나 UI의 상태와 일치시키기 위해 재생 시간을 추적한다. KVO를 통해 재생 객체의 상태 변화를 관찰하는 것을 앞에서 살펴 봤지만 지속적인 상태 변화를 추적하는데는 적절한 기법이 아니다. 대신 `AVPlayer`는 player의 시간 변화를 추적하는 두 가지 방법을 제공한다: periodic observations, boundary observations.
 
 - Periodic Observations
 
 일정한 주기에 따라 시간 변화를 추적하는 기법이다. custom player를 만들 때 가장 흔하게 사용되는 경우는 주기적인 관찰을 통해 시간을 표시하는 UI를 업데이트 하는 경우다.
 
-일정한 주기에 따라 시간 변화를 추적하기 위해선 player의 `addPeriodicTimeObserverForInterval:queue:usingBlock:` 메소드를 사용한다. 이 메소드는 `CMTime`으로 표현되는 시간 주기, serial dispatch queue와 일정 주기마다 실행될 call back 블럭을 사용한다. 다음 코드는 보통의 재생에서 0.5초 마다 호출되는 블럭을 어떻게 구성하는지 보여준다.
+일정한 주기에 따라 시간 변화를 추적하기 위해선 player의 `addPeriodicTimeObserverForInterval:queue:usingBlock:` 메소드를 사용한다. 이 메소드는 `CMTime`으로 표현되는 시간 주기, serial dispatch queue, 일정 주기마다 실행될 call back 블럭을 사용한다. 다음 코드는 보통의 재생에서 0.5초 마다 호출되는 블럭을 어떻게 구성하는지 보여준다.
 
 ```swift
 var player: AVPlayer!
