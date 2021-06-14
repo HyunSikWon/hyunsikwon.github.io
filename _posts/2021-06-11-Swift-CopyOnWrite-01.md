@@ -50,7 +50,7 @@ print(address: array2) //0x6000000aa100
 
 Copy-on-Write behavior를 직접 구현할 수도 있다. 
 
-```Swift
+```swift
 final class Ref<T> {
     var val : T
 		init(_ v : T) {val = v}
