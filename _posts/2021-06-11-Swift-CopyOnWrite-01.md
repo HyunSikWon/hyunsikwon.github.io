@@ -21,7 +21,6 @@ Swift에서 큰 값 타입의 데이터를 변수에 대입하거나 매개변�
 **예제 코드**
 
 ```swift
-
 func print(address o: UnsafeRawPointer ) {
     print(String(format: "%p", Int(bitPattern: o)))
 }
@@ -52,24 +51,24 @@ Copy-on-Write behavior를 직접 구현할 수도 있다.
 
 ```swift
 final class Ref<T> {
-    var val : T
-		init(_ v : T) {val = v}
+  var val : T
+  init(_ v : T) {val = v}
 }
 
 struct Box<T> {
-    var ref: Ref<T>
-		init(_ x: T) { ref = Ref(x) }
-
-    var value: T {
-        get { return ref.val }
-        set {
-          if (!isUniquelyReferencedNonObjC(&ref)) {
-            ref = Ref(newValue)
-            return
-					}
-          ref.val = newValue
-        }
+  var ref: Ref<T>
+  init(_ x: T) { ref = Ref(x) }
+  
+  var value: T {
+    get { return ref.val }
+    set {
+      if (!isUniquelyReferencedNonObjC(&ref)) {
+        ref = Ref(newValue)
+        return
+      }
+      ref.val = newValue
     }
+  }
 }
 // This code was an example taken from the swift repo doc file OptimizationTips
 // Link: https://github.com/apple/swift/blob/master/docs/OptimizationTips.rst#advice-use-copy-on-write-semantics-for-large-values
