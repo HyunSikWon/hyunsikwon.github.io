@@ -73,6 +73,58 @@ class ChildClass: ParentClass {
 
 ![message-dispatch](https://user-images.githubusercontent.com/48352065/122001313-1ba8fb80-cdeb-11eb-83de-e30cc6102a6c.png)
 
+## **Examples**
+
+### **Value Types**
+
+```swift
+struct Person {
+  func isIrritating() -> Bool { } // Static
+}
+
+extension Person {
+  func canBeEasilyPissedOff() -> Bool { } // Static
+}
+```
+
+`struct`와 `enum`은 모두 값 타입이기 때문에 상속을 지원하지 않는다. 따라서 컴파일러는 정적 디스패치를 사용한다. 
+
+### **Protocol**
+
+```swift
+protocol Animal {
+  func isCute() -> Bool { } // Table
+}
+
+extension Animal {
+  func canGetAngry() -> Bool { } // Static
+}
+```
+
+키포인트는 `extension` 내부에서는 항상 정적 디스패치가 이루어진다는 것이다. `extension`에서는 재정의가 불가능하기 때문에 그렇다.
+
+### **Class**
+
+```swift
+class Dog: Animal {
+  func isCute() -> Bool { } // Table
+  @objc dynamic func hoursSleep() -> Int { } // Message
+}
+
+extension Dog {
+  func canBite() -> Bool { } // Static
+  @objc func goWild() { } // Message
+}
+
+final class Employee {
+  func canCode() -> Bool { } // Static
+}
+```
+
+- 기본 메소드 선언은 프로토콜과 같은 원칙을 갖는다.(Table Dispatch)
+- 반면에 `@objc`로 선언된 메소드는 Objective-C 런타임에 노출되어 Message Dispatch를 사용한다.
+- 만약 클래스가 `final` 키워드와 함께 선언되면 해당 클래스는 더 이상 서브클래싱 될수 없으므로 해당 클래스의 메소드는 Static Dispatch를 사용한다.
+
 
 ## Reference
 
