@@ -20,7 +20,7 @@ first responder에서 이벤트를 처리하지 않는다면 해당 이벤트는
 
 만약 텍스트 필드가 이벤트를 처리하지 않는다면 UIKit은 이벤트를 부모 객체인 `UIView` 객체와 `UIWindow`의 루트 뷰를 거쳐 전달된다. 루트 뷰에서는 responder chain이 `UIWindow`로 바로 향하지 않고 `UIViewController` 로 우회하여 전달된다.
 
-## First Responder 결정
+## First Responder 결정하기
 
 UIKit은 다음과 같이 여러 이벤트 타입에 따라 first responder를 결정한다.
 
@@ -39,7 +39,7 @@ UIKit은 다음과 같이 여러 이벤트 타입에 따라 first responder를 �
 
 UIControl은 특정 액션이나 사용자의 의도(드래그, 버튼 클릭 등등)를 전달하는 시각적인 요소들의 기반이 되는 클래스이다. UIControl 클래스를 상속하는 클래스로는 대표적으로 UIButton 클래스가 있다. 즉, 사용자에게 보여지는 뷰가 사용자와 상호작용할 수 있게끔 능력을 부여해주는 클래스라고 설명할 수 있다. UIControl은 Target-Action이라는 매커니즘을 이용해 사용자의 액션들을 앱에 전달한다. 비록 액션 메시지는 이벤트는 아니자만, Responder Chain을 이용하게 되는데, 만약 특정 컨트롤에서의 타겟이 nil이라면 UIKit은 해당 컨트롤을 가진 뷰에서부터 시작해서 Responder Chain을 따라가며 적절한 액션 메소드를 찾게 된다.
 
-## 어떤 Responder가 이벤트를 가지고 있는지 확인
+## 어떤 Responder가 이벤트를 가지고 있는지 확인하기
 
 UIKit은 hit-testing을 통해 터치 이벤트가 발생한 최상단 뷰를 찾으며 그렇게 찾은 뷰가 해당 이벤트를 처리할 수 있는 첫 번째 뷰, 즉 First Responder가 되는 것이다. 터치가 발생한 위치와 계층 내 뷰 객체의 bounds를 비교하는 방식으로 수행된다. 
 
