@@ -23,6 +23,8 @@ first responder에서 이벤트를 처리하지 않는다면 해당 이벤트는
 ## First Responder 결정
 
 UIKit은 다음과 같이 여러 이벤트 타입에 따라 first responder를 결정한다.
+
+
 | 이벤트 타입 | First Responder |
 |----------|-----------------|
 | 터치 이벤트 | 터치가 발생한 뷰 |
