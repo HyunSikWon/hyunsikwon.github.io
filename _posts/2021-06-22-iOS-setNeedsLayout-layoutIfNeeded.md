@@ -1,3 +1,15 @@
+---
+title: iOS - setNeedsLayout과 layoutIfNeeded
+layout: single
+comments: true
+share: true
+categories: 
+- iOS
+tag:
+- UIView
+last_modified_at: 2021-06-14 T15:45:00+08:00
+---
+
 `UIView`의 view-layout 메소드인 `setNeedsLayout`과 `layoutIfNeeded`에 대해 알아보려 합니다. `setNeedsLayout`과 `layoutIfNeeded`을 알아보기 전에 Main Run Loop 개념을 먼저 살펴보자. 
 
 ## Main Run Loop
