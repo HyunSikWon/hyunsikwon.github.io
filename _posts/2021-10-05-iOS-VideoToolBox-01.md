@@ -1,3 +1,15 @@
+---
+title: iOS - VideoToolBox
+layout: single
+comments: true
+share: true
+categories: 
+- iOS
+tag:
+- VideoToolBox
+last_modified_at: 2021-10-05 T13:53:00+08:00
+---
+
 WWDC14 - Direct Access to Video Encoding and Decoding 를 보고 디코딩 관련 개념을 정리한 글입니다.
 
 
